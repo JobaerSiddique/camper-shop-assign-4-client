@@ -65,7 +65,11 @@ export const Navbar = () => {
           <li className="group flex cursor-pointer flex-col">
               Contact<span className="mt-[2px] h-[3px] w-[0px] rounded-full bg-sky-500 transition-all duration-300 group-hover:w-full"></span>
           </li>
-
+          <NavLink to="/productManagement">
+              <li className="group flex cursor-pointer flex-col">
+                  ProductManagement<span className="mt-[2px] h-[3px] w-[0px] rounded-full bg-sky-500 transition-all duration-300 group-hover:w-full"></span>
+              </li>
+          </NavLink>
           {user ? (
               <button onClick={handleLogout}>logOut</button>
           ) : (
@@ -112,7 +116,11 @@ export const Navbar = () => {
                   <li className="cursor-pointer px-6 py-2 text-white hover:bg-sky-600">
                       Contact
                   </li>
-
+                  <NavLink to="/productManagement">
+                      <li className="cursor-pointer px-6 py-2 text-white hover:bg-sky-600">
+                          ProductManagement
+                      </li>
+                  </NavLink>
                   {user ? (
                       <button className='text-white' onClick={handleLogout}>logOut</button>
                   ) : (

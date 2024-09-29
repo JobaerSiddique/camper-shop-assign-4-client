@@ -10,6 +10,7 @@ import UserCartPage from "../component/Cart/UserCartPage";
 import SignUp from "../page/Auth/SignUp";
 import CheckOutPage from "../component/CheckOutPage/CheckOutPage";
 import SuccessPage from "../component/CheckOutPage/SuccessPage";
+import ProductManagement from "../component/ProductManagement/ProductManagement";
 
 
 
@@ -65,6 +66,11 @@ const router = createBrowserRouter([
         
                 path:'/success',
                 element: <SuccessPage/>,
+            },
+            {
+        
+                path:'/productManagement',
+                element: <ProductManagement/>,
             }
            
         ]
