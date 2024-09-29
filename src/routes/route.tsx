@@ -8,6 +8,7 @@ import About from "../page/About";
 import HomePage from "../page/HomePage";
 import UserCartPage from "../component/Cart/UserCartPage";
 import SignUp from "../page/Auth/SignUp";
+import CheckOutPage from "../component/CheckOutPage/CheckOutPage";
 
 
 
@@ -53,6 +54,11 @@ const router = createBrowserRouter([
         
                 path:'/signUp',
                 element: <SignUp/>,
+            },
+            {
+        
+                path:'/checkout',
+                element: <CheckOutPage/>,
             }
            
         ]

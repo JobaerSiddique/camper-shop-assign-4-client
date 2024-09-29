@@ -1,23 +1,24 @@
-import { Button, Checkbox, InputNumber, Modal } from "antd";
+import { Button, Checkbox, InputNumber, message, Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useDeleteCartMutation, useGetTotalPriceQuery, useGetUserCartQuery, useUpdateCartMutation,  } from "../../redux/features/Cart/CartApi";
+import { Link } from "react-router-dom";
 
 const { confirm } = Modal;
 
 const UserCartPage = () => {
-    const { data: cartItems } = useGetUserCartQuery(undefined); // Fetch cart items
-    const { data: price } = useGetTotalPriceQuery(undefined); // Fetch total price
-    const [deleteCart] = useDeleteCartMutation(); // Delete mutation
-    const [updateCartQuantity] = useUpdateCartMutation(); // Update quantity mutation
+    const { data: cartItems } = useGetUserCartQuery(undefined); 
+    const { data: price } = useGetTotalPriceQuery(undefined); 
+    const [deleteCart] = useDeleteCartMutation(); 
+    const [updateCartQuantity] = useUpdateCartMutation(); 
     const totPrice = price?.toFixed(2)
-    // Local state for handling quantity changes
+   const disableButton = totPrice === 0
     const [localQuantity, setLocalQuantity] = useState({});
-    console.log({localQuantity});
-    // Make sure cartItems exists and is an array before filtering
+   
+   
     const activeCart = cartItems ? cartItems.filter(item => !item.isDeleted) : [];
 
-    // Handle deletion of a cart item
+    
     const handleDeleteCart = (id) => {
         confirm({
             title: 'Are you sure you want to remove this product?',
@@ -48,9 +49,15 @@ const UserCartPage = () => {
             [id]: value,
         }));
 
-      console.log(id,value);
-       const res= await updateCartQuantity({ id, quantity: value }).unwrap()
-       console.log(res);
+      const updateInfo = {
+        cartId: id,
+        quantity: value,
+      }
+       const res= await updateCartQuantity(updateInfo).unwrap()
+       if(res.success){
+         message.success(`${res.message}`);
+        
+       }
          
     };
 
@@ -97,13 +104,16 @@ const UserCartPage = () => {
                         <p className="mt-2">Total: ৳{totPrice}</p>
 
                         {/* Place Order Button */}
-                        <Button
+                       <Link to="/checkout">
+                       <Button
                             className="my-10"
                             type="primary"
                             block
+                            disabled={disableButton}
                         >
                             Proceed to Checkout
                         </Button>
+                       </Link>
                     </div>
                 </div>
             </div>
