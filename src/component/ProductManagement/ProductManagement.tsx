@@ -1,71 +1,163 @@
-import { Space, Table, TableProps, Tag } from "antd";
-import { useGetProductsQuery } from "../../redux/features/Product/productApi";
+import React, { useState } from "react";
+import { Button, Form, Input, message, Modal, Space, Table, Tag } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useDeleteProductMutation, useGetProductsQuery, useUpdateProductMutation,  } from "../../redux/features/Product/productApi";
 
+const { confirm } = Modal;
 
 const ProductManagement = () => {
-   const {data} = useGetProductsQuery(undefined)
-   console.log(data);
-    
-   interface DataType {
-    key: string;
-    name: string;
-    age: number;
-    address: string;
-    tags: string[];
-  }
-   const columns: TableProps<DataType>['columns'] = [
+  const { data } = useGetProductsQuery(undefined);
+  const [deleteProduct] = useDeleteProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
+  
+  const products = data?.data || [];
+  
+  // State to control modal visibility and form data
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Show the delete confirmation modal
+  const showDeleteConfirm = (productId: string) => {
+    confirm({
+      title: "Are you sure you want to delete this product?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Once deleted, this action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        handleDeleteProduct(productId);
+      },
+    });
+  };
+
+  // Function to delete a product
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      const res = await deleteProduct(productId).unwrap();
+      if (res.success) {
+        message.success(res.message);
+      }
+    } catch (error) {
+      console.error("Failed to delete the product:", error);
+    }
+  };
+
+  /
+  const handleEditProduct = (product: any) => {
+    setSelectedProduct(product);
+    setIsModalVisible(true);  
+  };
+
+  // Handle updating the product
+  const handleUpdateProduct = async (values: any) => {
+    try {
+      const res = await updateProduct({ id: selectedProduct._id, ...values }).unwrap();
+      if (res.success) {
+        message.success("Product updated successfully!");
+        setIsModalVisible(false);  // Close the modal
+      }
+    } catch (error) {
+      console.error("Failed to update product:", error);
+    }
+  };
+
+  // Modal form submission handler
+  const onFinish = (values: any) => {
+    handleUpdateProduct(values);
+  };
+
+  const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+      title: "Image",
+      dataIndex: "images",
+      key: "images",
+      render: (images: string[]) => (
+        <img src={images[0]} alt="product" style={{ width: "50px", height: "50px", objectFit: "cover" }} />
       ),
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (price: number) => <span>${price}</span>,
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      render: (category: string) => <Tag color="blue">{category}</Tag>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (record: any) => (
         <Space size="middle">
-          <a>Invite {record.name}</a>
-          <a>Delete</a>
+          <Button type="primary" onClick={() => handleEditProduct(record)}>
+            Edit
+          </Button>
+          <Button type="primary" danger onClick={() => showDeleteConfirm(record._id)}>
+            Delete
+          </Button>
         </Space>
       ),
     },
   ];
-   return (
-        <div>
-            <Table columns={columns} dataSource={data} />
-        </div>
-    );
+
+  return (
+    <div>
+      <div className="mb-4">
+        <Button type="primary" onClick={() => console.log("Create a new product")}>
+          Create New Product
+        </Button>
+      </div>
+
+      <Table columns={columns} dataSource={products} rowKey="_id" />
+
+      {/* Modal for editing a product */}
+      <Modal
+        title="Edit Product"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        {selectedProduct && (
+          <Form
+            layout="vertical"
+            onFinish={onFinish}
+            initialValues={{
+              name: selectedProduct.name,
+              price: selectedProduct.price,
+              category: selectedProduct.category,
+            }}
+          >
+            <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please input the product name!' }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item label="Price" name="price" rules={[{ required: true, message: 'Please input the product price!' }]}>
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item label="Category" name="category" rules={[{ required: true, message: 'Please input the product category!' }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Update Product
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
+    </div>
+  );
 };
 
 export default ProductManagement;

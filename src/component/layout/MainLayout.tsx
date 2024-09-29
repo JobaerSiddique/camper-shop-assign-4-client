@@ -7,7 +7,7 @@ const MainLayout = () => {
     return (
        <>
        <Navbar/>
-       <div className=" min-h-screen container mx-auto  flex justify-center items-center">
+       <div className=" container mx-auto  flex justify-center items-center">
         <Outlet/>
        </div>
        <Footer/>
