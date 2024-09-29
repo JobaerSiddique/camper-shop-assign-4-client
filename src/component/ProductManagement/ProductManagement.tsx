@@ -11,7 +11,8 @@ const ProductManagement = () => {
   const [updateProduct] = useUpdateProductMutation();
   
   const products = data?.data || [];
-  
+  const activeProducts = products.filter(p=>!p.isDeleted)
+  console.log(activeProducts);
   // State to control modal visibility and form data
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -31,7 +32,7 @@ const ProductManagement = () => {
     });
   };
 
-  // Function to delete a product
+ 
   const handleDeleteProduct = async (productId: string) => {
     try {
       const res = await deleteProduct(productId).unwrap();
@@ -43,19 +44,21 @@ const ProductManagement = () => {
     }
   };
 
-  /
+  
   const handleEditProduct = (product: any) => {
     setSelectedProduct(product);
     setIsModalVisible(true);  
   };
 
-  // Handle updating the product
+ 
   const handleUpdateProduct = async (values: any) => {
     try {
-      const res = await updateProduct({ id: selectedProduct._id, ...values }).unwrap();
+      console.log(values,selectedProduct._id);
+      const res = await updateProduct({ id: selectedProduct._id, data:values }).unwrap();
+      console.log(res);
       if (res.success) {
         message.success("Product updated successfully!");
-        setIsModalVisible(false);  // Close the modal
+        setIsModalVisible(false);  
       }
     } catch (error) {
       console.error("Failed to update product:", error);
@@ -64,7 +67,16 @@ const ProductManagement = () => {
 
   // Modal form submission handler
   const onFinish = (values: any) => {
-    handleUpdateProduct(values);
+    const updateProduct = {
+      name: values.name,
+      price: Number(values.price),
+      stock:Number(values.stock),
+      category: values.category,
+      description: values.description,
+
+    }
+   
+    handleUpdateProduct(updateProduct);
   };
 
   const columns = [
@@ -134,6 +146,8 @@ const ProductManagement = () => {
               name: selectedProduct.name,
               price: selectedProduct.price,
               category: selectedProduct.category,
+              stock: selectedProduct.stock,
+              description: selectedProduct.description,
             }}
           >
             <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please input the product name!' }]}>
@@ -145,6 +159,12 @@ const ProductManagement = () => {
             </Form.Item>
 
             <Form.Item label="Category" name="category" rules={[{ required: true, message: 'Please input the product category!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="stock" name="stock" rules={[{ required: true, message: 'Please input the product stock!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="description" name="description" rules={[{ required: true, message: 'Please input the product description!' }]}>
               <Input />
             </Form.Item>
 

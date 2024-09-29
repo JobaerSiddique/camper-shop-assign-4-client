@@ -21,7 +21,7 @@ export const Navbar = () => {
 
   console.log(data);
     useEffect(() => {
-        const closeDropDown = (e) => {
+        const closeDropDown = (e:any) => {
             if (!dropDownMenuRef?.current?.contains(e?.target)) {
                 setDropDownState(false);
             }
