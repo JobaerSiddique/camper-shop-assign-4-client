@@ -16,7 +16,8 @@ export const Navbar = () => {
  
   const user = useAppSelector(currentUser)
   const {data} = useGetUserCartQuery(undefined)
-  const totalCart = data?.filter((item: any) => !item.isDeleted).length || 0;
+  const unpaidCartItems = data?.filter((item: any) => !item.isDeleted && item.paid !== 'paid') || [];
+    const totalCart = unpaidCartItems.length || 0; 
 
   console.log(data);
     useEffect(() => {

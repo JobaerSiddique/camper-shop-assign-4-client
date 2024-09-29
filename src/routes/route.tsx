@@ -9,6 +9,7 @@ import HomePage from "../page/HomePage";
 import UserCartPage from "../component/Cart/UserCartPage";
 import SignUp from "../page/Auth/SignUp";
 import CheckOutPage from "../component/CheckOutPage/CheckOutPage";
+import SuccessPage from "../component/CheckOutPage/SuccessPage";
 
 
 
@@ -59,6 +60,11 @@ const router = createBrowserRouter([
         
                 path:'/checkout',
                 element: <CheckOutPage/>,
+            },
+            {
+        
+                path:'/success',
+                element: <SuccessPage/>,
             }
            
         ]

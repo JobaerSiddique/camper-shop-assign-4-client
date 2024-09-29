@@ -1,6 +1,6 @@
 import { Button, Checkbox, InputNumber, Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // for navigation
 import { useDeleteCartMutation, useGetTotalPriceQuery, useGetUserCartQuery, useUpdateCartMutation } from "../../redux/features/Cart/CartApi";
 
@@ -13,9 +13,21 @@ const UserCartPage = () => {
     const [updateCartQuantity] = useUpdateCartMutation(); 
     const totPrice = price?.toFixed(2);
     const [localQuantity, setLocalQuantity] = useState({});
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
+    // Filter out active cart items
     const activeCart = cartItems ? cartItems.filter(item => !item.isDeleted) : [];
+    
+    // Check if the cart is paid
+    const cartPaid = cartItems ? cartItems.some(item => item.paid === "paid") : false;
+
+    // Redirect if the cart is paid
+    // useEffect(() => {
+    //     if (cartPaid) {
+    //         message.info("Your cart has already been paid.");
+    //         navigate("/carts"); // Redirect to order summary or any other page
+    //     }
+    // }, [cartPaid, navigate]);
 
     const handleDeleteCart = (id) => {
         confirm({
@@ -27,7 +39,7 @@ const UserCartPage = () => {
             cancelText: 'No',
             async onOk() {
                 try {
-                    const res = await deleteCart(id).unwrap();
+                    await deleteCart(id).unwrap();
                     message.success('Product removed from cart.');
                 } catch (error) {
                     message.error('Failed to remove product. Try again.');
@@ -43,7 +55,7 @@ const UserCartPage = () => {
         }));
 
         const updateInfo = {
-            cartId: id, // Use correct cart item ID
+            cartId: id, 
             quantity: value,
         };
 
@@ -56,12 +68,11 @@ const UserCartPage = () => {
     };
 
     const handleProceedToCheckout = () => {
-        const cartItemIds = activeCart.map(item => item._id); // Get all cart item IDs
-    const totalPrice = totPrice;
-    navigate("/checkout", {
-        state: { cartItemIds, totalPrice }
-    });
-
+        const cartItemIds = activeCart.map(item => item._id); 
+        const totalPrice = totPrice;
+        navigate("/checkout", {
+            state: { cartItemIds, totalPrice }
+        });
     };
 
     return (
@@ -114,7 +125,7 @@ const UserCartPage = () => {
                         className="my-10"
                         type="primary"
                         block
-                        disabled={activeCart.some(item => item.product.stock <= 0)} // Disable if any product is out of stock
+                        disabled={activeCart.some(item => item.product.stock <= 0)} 
                         onClick={handleProceedToCheckout}
                     >
                         Proceed to Checkout

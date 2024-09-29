@@ -1,14 +1,21 @@
 import { useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
-import { Card } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Card, message } from "antd";
+import { useCreateOrderMutation } from "../../redux/features/order/OrderApi";
+import Swal from "sweetalert2";
+import Loading from "../../page/Shared/Loading";
 
 const CheckoutPage = () => {
     const location = useLocation();
     const { cartItemIds } = location.state;
     const totalPrice = Number(location.state?.totalPrice || 0)
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [orders,{isLoading}] = useCreateOrderMutation()
+    const navigate = useNavigate()
 
-    const onSubmit = (data) => {
+
+  
+    const onSubmit =async (data) => {
         const order = {
             cartItemIds,
             totalPrice,
@@ -18,10 +25,27 @@ const CheckoutPage = () => {
                 phone: data.phone,
                 address: data.address
             }
+            
         };
-        console.log(order);
+        const res = await orders(order).unwrap();
+        if(res.success){
+            Swal.fire({
+                position: "top-center",
+                icon: "success",
+                title: `${res.message}`,
+                showConfirmButton: false,
+                timer: 1500
+              });
+              navigate('/success')
+        }
+        else{
+            message.error(res.message);
+        }
+        
     };
-
+    if(isLoading){
+        return <Loading/>
+    }
     return (
         <>
             <Card bordered={true} style={{ width: 500 }} className="shadow-2xl mx-auto my-10">
