@@ -4,7 +4,7 @@ const { Panel } = Collapse;
 
 const FAQSection = () => {
   return (
-    <div className="py-12 bg-gray-100">
+    <div className="py-12 bg-gray-100 my-16">
       <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
       <div className="max-w-4xl mx-auto">
         <Collapse accordion>

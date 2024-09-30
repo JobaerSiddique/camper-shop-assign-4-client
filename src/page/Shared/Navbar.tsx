@@ -51,6 +51,11 @@ export const Navbar = () => {
 
             {/* Main Nav Links */}
             <ul className="hidden items-center justify-between gap-10 md:flex">
+                <NavLink to="/">
+                    <li className="group flex cursor-pointer flex-col">
+                        Home<span className="mt-[2px] h-[3px] w-[0px] rounded-full bg-sky-500 transition-all duration-300 group-hover:w-full"></span>
+                    </li>
+                </NavLink>
                 <NavLink to="/products">
                     <li className="group flex cursor-pointer flex-col">
                         Products<span className="mt-[2px] h-[3px] w-[0px] rounded-full bg-sky-500 transition-all duration-300 group-hover:w-full"></span>
@@ -100,6 +105,11 @@ export const Navbar = () => {
 
                 {dropDownState && (
                     <ul className="z-10 gap-2 bg-[#393E46] absolute right-0 top-11 flex w-[200px] flex-col rounded-lg text-base">
+                        <NavLink to="/">
+                            <li className="cursor-pointer px-6 py-2 text-white rounded-t-lg hover:bg-sky-600">
+                                Home
+                            </li>
+                        </NavLink>
                         <NavLink to="/products">
                             <li className="cursor-pointer px-6 py-2 text-white rounded-t-lg hover:bg-sky-600">
                                 Products
