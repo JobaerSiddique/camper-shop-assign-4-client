@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGetProductsQuery } from '../../redux/features/Product/productApi';
-import { Link } from 'react-router-dom'; // For navigation
+import { Link } from 'react-router-dom'; 
 import Loading from '../../page/Shared/Loading';
 
 
@@ -28,9 +28,9 @@ const BestSelling: React.FC = () => {
     return <div>Error loading products</div>;
   }
 
-  // Destructure the product data and select the first 3 products
+  
   const products: Product[] = data?.data ?? [];
-  const activeProduct = products.filter(p => !p.isDeleted); // Filtering out deleted products
+  const activeProduct = products.filter(p => !p.isDeleted); 
   const recommendedProducts = activeProduct.slice(0, 3); 
 
   return (
@@ -43,14 +43,14 @@ const BestSelling: React.FC = () => {
             <div className="aspect-w-16 aspect-h-9">
               <img
                 className="w-full h-full object-cover"
-                src={product.images[0]} // Display the first image of the product
+                src={product.images[0]} 
                 alt={product.name}
               />
             </div>
             {/* Product Info */}
             <div className="p-4">
               <h3 className="text-xl font-semibold mb-2 text-center">{product.name}</h3>
-              <p className="text-gray-600 text-center mb-4">${product.price}</p>
+              <p className="text-orange-600 text-center mb-4 font-bold">${product.price}</p>
               <p className="text-sm text-gray-500 text-center">{product.description}</p>
             </div>
           </div>
