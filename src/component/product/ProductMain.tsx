@@ -5,6 +5,7 @@ import ProductCard from "./ProductCard";
 import Loading from "../../page/Shared/Loading";
 import { useAppSelector } from "../../redux/hook";
 import { currentUser } from "../../redux/features/Auth/AuthSlice";
+import { Product } from "../../types/types";
 
 
 const ProductMain = () => {
@@ -59,7 +60,7 @@ const query = {
           className="ml-2 p-2 border rounded"
         >
            <option value="">All Categories</option>
-          {data?.data?.map(item=> <option key={item.category} value={item.
+          {data?.data?.map((item: Product)=> <option key={item.category} value={item.
 category}>{item.category}</option>)}
         </select>
         <input

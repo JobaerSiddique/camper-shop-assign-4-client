@@ -4,7 +4,7 @@ import { useAppDispatch } from "../../redux/hook";
 import { setUser } from "../../redux/features/Auth/AuthSlice";
 import { verifyToken } from "../../utils/VerifyToken";
 import { Link, useNavigate } from "react-router-dom";
-import { notification } from "antd";
+
 import Swal from "sweetalert2";
 
 type FormData = {
