@@ -12,6 +12,7 @@ import CheckOutPage from "../component/CheckOutPage/CheckOutPage";
 import SuccessPage from "../component/CheckOutPage/SuccessPage";
 import ProductManagement from "../component/ProductManagement/ProductManagement";
 import CreateProduct from "../component/ProductManagement/createProduct";
+import ProtectedRoute from "../component/layout/ProtectedRoute";
 
 
 
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
             
             {
                 path:'/products/:id',
-                element:<SingleProductInfo/>
+                element:<ProtectedRoute><SingleProductInfo/></ProtectedRoute>
                
                 
             },
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
             },
             {
                 path:'/cart',
-                element:<UserCartPage/>
+                element:<ProtectedRoute><UserCartPage/></ProtectedRoute>
                
                 
             },
@@ -71,12 +72,12 @@ const router = createBrowserRouter([
             {
         
                 path:'/productManagement',
-                element: <ProductManagement/>,
+                element: <ProtectedRoute><ProductManagement/></ProtectedRoute>,
             },
             {
         
                 path:'/createProduct',
-                element: <CreateProduct/>,
+                element: <ProtectedRoute><CreateProduct/></ProtectedRoute>
             }
            
         ]
