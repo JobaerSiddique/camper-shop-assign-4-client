@@ -32,7 +32,9 @@ export const Navbar = () => {
     }, []);
 
     const handleLogout = () => {
+
         dispatch(logOut());
+        window.location.reload(); 
     };
 
     return (
