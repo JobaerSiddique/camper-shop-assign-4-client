@@ -1,29 +1,38 @@
 import React, { useState } from "react";
 import { Card, Button, Input, Form, message, InputNumber, Upload } from "antd";
 import { useForm, Controller } from "react-hook-form";
-import { useCreateProductMutation } from "../../redux/features/Product/productApi";
 import { UploadOutlined } from "@ant-design/icons";
+import { RcFile } from "antd/es/upload/interface";
+import { useCreateProductMutation } from "../../redux/features/Product/productApi";
 
 const { TextArea } = Input;
 
-const CreateProduct = () => {
+interface ProductFormData {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  category: string;
+  ratings: number;
+}
+
+const CreateProduct: React.FC = () => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [createProduct] = useCreateProductMutation();
-  const cloudName = import.meta.env.VITE_Cloud_name;
-  const upload = import.meta.env.VITE_upload_preset
+  const cloudName = import.meta.env.VITE_Cloud_name as string;
+  const uploadPreset = import.meta.env.VITE_upload_preset as string;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    
-  } = useForm();
+  } = useForm<ProductFormData>();
 
-
-  const handleImageUpload = async (file: File) => {
+  // Function to handle image uploads
+  const handleImageUpload = async (file: RcFile) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", upload); 
+    formData.append("upload_preset", uploadPreset);
 
     try {
       const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
@@ -32,7 +41,7 @@ const CreateProduct = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        return data.secure_url; 
+        return data.secure_url;
       } else {
         message.error("Failed to upload image");
         return null;
@@ -44,8 +53,8 @@ const CreateProduct = () => {
     }
   };
 
-  
-  const onFileChange = async ({ file }) => {
+  // Handle file change and upload
+  const onFileChange = async ({ file }: { file: RcFile }) => {
     const uploadedImageUrl = await handleImageUpload(file);
     if (uploadedImageUrl) {
       setImageUrls((prev) => [...prev, uploadedImageUrl]);
@@ -55,23 +64,20 @@ const CreateProduct = () => {
     }
   };
 
- 
-  const onSubmit = async (data: any) => {
+  // Submit form handler
+  const onSubmit = async (data: ProductFormData) => {
     try {
       const productData = {
-        name: data.name,
+        ...data,
         price: Number(data.price),
         stock: Number(data.stock),
-        description: data.description,
-        category: data.category,
         ratings: Number(data.ratings),
-        images: imageUrls, 
+        images: imageUrls, // Images from Cloudinary
       };
       const res = await createProduct(productData).unwrap();
-      if(res.success){
-            message.success(res.message)
+      if (res.success) {
+        message.success(res.message);
       }
-
     } catch (error) {
       message.error("Failed to create product");
       console.error(error);
@@ -80,24 +86,24 @@ const CreateProduct = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-xl lg:text-5xl font-bold text-center uppercase mb-4">
+      <h1 className="text-xl lg:text-5xl font-bold text-center uppercase my-10">
         Add a Product
       </h1>
       <Card>
         <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-         
-          <Form.Item label="Product Name" validateStatus={errors.name && "error"}>
+          {/* Product Name */}
+          <Form.Item label="Product Name" validateStatus={errors.name ? "error" : ""}>
             <Controller
               name="name"
               control={control}
               rules={{ required: "Product name is required" }}
               render={({ field }) => <Input {...field} placeholder="Enter Product Name" />}
             />
-            {errors.name && <p className="text-red-500">{String(errors.name.message)}</p>}
+            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
           </Form.Item>
 
           {/* Price */}
-          <Form.Item label="Price" validateStatus={errors.price && "error"}>
+          <Form.Item label="Price" validateStatus={errors.price ? "error" : ""}>
             <Controller
               name="price"
               control={control}
@@ -106,11 +112,11 @@ const CreateProduct = () => {
                 <InputNumber {...field} min={1} placeholder="Enter Price" style={{ width: "100%" }} />
               )}
             />
-            {errors.price && <p className="text-red-500">{String(errors.price.message)}</p>}
+            {errors.price && <p className="text-red-500">{errors.price.message}</p>}
           </Form.Item>
 
           {/* Stock */}
-          <Form.Item label="Stock" validateStatus={errors.stock && "error"}>
+          <Form.Item label="Stock" validateStatus={errors.stock ? "error" : ""}>
             <Controller
               name="stock"
               control={control}
@@ -119,11 +125,11 @@ const CreateProduct = () => {
                 <InputNumber {...field} min={1} placeholder="Enter Stock" style={{ width: "100%" }} />
               )}
             />
-            {errors.stock && <p className="text-red-500">{String(errors.stock.message)}</p>}
+            {errors.stock && <p className="text-red-500">{errors.stock.message}</p>}
           </Form.Item>
 
           {/* Description */}
-          <Form.Item label="Description" validateStatus={errors.description && "error"}>
+          <Form.Item label="Description" validateStatus={errors.description ? "error" : ""}>
             <Controller
               name="description"
               control={control}
@@ -132,22 +138,22 @@ const CreateProduct = () => {
                 <TextArea {...field} rows={4} placeholder="Enter Product Description" />
               )}
             />
-            {errors.description && <p className="text-red-500">{String(errors.description.message)}</p>}
+            {errors.description && <p className="text-red-500">{errors.description.message}</p>}
           </Form.Item>
 
           {/* Category */}
-          <Form.Item label="Category" validateStatus={errors.category && "error"}>
+          <Form.Item label="Category" validateStatus={errors.category ? "error" : ""}>
             <Controller
               name="category"
               control={control}
               rules={{ required: "Category is required" }}
               render={({ field }) => <Input {...field} placeholder="Enter Category" />}
             />
-            {errors.category && <p className="text-red-500">{String(errors.category.message)}</p>}
+            {errors.category && <p className="text-red-500">{errors.category.message}</p>}
           </Form.Item>
 
           {/* Ratings */}
-          <Form.Item label="Ratings" validateStatus={errors.ratings && "error"}>
+          <Form.Item label="Ratings" validateStatus={errors.ratings ? "error" : ""}>
             <Controller
               name="ratings"
               control={control}
@@ -156,7 +162,7 @@ const CreateProduct = () => {
                 <InputNumber {...field} min={1} max={5} step={0.1} placeholder="Enter Rating" style={{ width: "100%" }} />
               )}
             />
-            {errors.ratings && <p className="text-red-500">{String(errors.ratings.message)}</p>}
+            {errors.ratings && <p className="text-red-500">{errors.ratings.message}</p>}
           </Form.Item>
 
           {/* Image Upload */}
@@ -170,8 +176,6 @@ const CreateProduct = () => {
             >
               <Button icon={<UploadOutlined />}>Upload Images</Button>
             </Upload>
-
-            
             <div className="mt-4">
               {imageUrls.map((url, index) => (
                 <img
@@ -184,7 +188,7 @@ const CreateProduct = () => {
             </div>
           </Form.Item>
 
-          {/* Submit Button */}
+          
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
               Create Product

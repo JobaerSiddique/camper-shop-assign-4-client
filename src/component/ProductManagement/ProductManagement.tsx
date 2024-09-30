@@ -6,16 +6,27 @@ import { Link } from "react-router-dom";
 
 const { confirm } = Modal;
 
-const ProductManagement = () => {
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  category: string;
+  stock: number;
+  description: string;
+  images: string[];
+  isDeleted: boolean;
+}
+
+const ProductManagement: React.FC = () => {
   const { data } = useGetProductsQuery(undefined);
   const [deleteProduct] = useDeleteProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   
-  const products = data?.data || [];
+  const products: Product[] = data?.data || [];
   const activeProducts = products.filter(p => !p.isDeleted); // Filter out deleted products
   
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null); // Allow null for initial state
 
   const showDeleteConfirm = (productId: string) => {
     confirm({
@@ -42,17 +53,19 @@ const ProductManagement = () => {
     }
   };
 
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
     setIsModalVisible(true);
   };
 
-  const handleUpdateProduct = async (values: any) => {
+  const handleUpdateProduct = async (values: Partial<Product>) => {
     try {
-      const res = await updateProduct({ id: selectedProduct._id, data: values }).unwrap();
-      if (res.success) {
-        message.success("Product updated successfully!");
-        setIsModalVisible(false);
+      if (selectedProduct) {
+        const res = await updateProduct({ id: selectedProduct._id, data: values }).unwrap();
+        if (res.success) {
+          message.success("Product updated successfully!");
+          setIsModalVisible(false);
+        }
       }
     } catch (error) {
       console.error("Failed to update product:", error);
@@ -60,7 +73,7 @@ const ProductManagement = () => {
   };
 
   const onFinish = (values: any) => {
-    const updateProduct = {
+    const updatedProduct: Partial<Product> = {
       name: values.name,
       price: Number(values.price),
       stock: Number(values.stock),
@@ -68,7 +81,7 @@ const ProductManagement = () => {
       description: values.description,
     };
 
-    handleUpdateProduct(updateProduct);
+    handleUpdateProduct(updatedProduct);
   };
 
   const columns = [
@@ -100,7 +113,7 @@ const ProductManagement = () => {
     {
       title: "Action",
       key: "action",
-      render: (record: any) => (
+      render: (record: Product) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleEditProduct(record)}>
             Edit
