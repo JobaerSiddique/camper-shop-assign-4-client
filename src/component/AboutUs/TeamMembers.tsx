@@ -21,15 +21,15 @@ const teamMembers = [
   
   const TeamMembers = () => {
     return (
-      <div className="py-12 bg-gray-100">
-        <h2 className="text-3xl font-bold text-center mb-8">Meet Our Team</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div className="p-12 bg-gray-100">
+        <h2 className="lg:text-3xl font-bold text-center mb-8">Meet Our Team</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center items-center">
           {teamMembers.map((member, index) => (
             <div key={index} className="text-center bg-white p-6 rounded-lg shadow-lg">
               <img src={member.image} alt={member.name} className="w-32 h-32 mx-auto rounded-full mb-4" />
-              <h3 className="text-xl font-bold">{member.name}</h3>
+              <h3 className="lg:text-xl font-bold">{member.name}</h3>
               <p className="text-gray-500">{member.position}</p>
-              <p className="mt-4 text-sm text-gray-700">{member.bio}</p>
+              <p className="mt-4 text-sm text-gray-700 text-justify p-5">{member.bio}</p>
             </div>
           ))}
         </div>

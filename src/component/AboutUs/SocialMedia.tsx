@@ -3,7 +3,7 @@ import { FacebookOutlined, TwitterOutlined, InstagramOutlined } from '@ant-desig
 const SocialMedia = () => {
     return (
         <div className="py-12 bg-gray-100">
-      <h2 className="text-3xl font-bold text-center mb-8">Follow Us</h2>
+      <h2 className="lg:text-3xl font-bold text-center mb-8">Follow Us</h2>
       <div className="flex justify-center space-x-6 text-3xl">
         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
           <FacebookOutlined className="hover:text-blue-600" />
