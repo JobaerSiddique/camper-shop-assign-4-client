@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Form, Input, message, Modal, Space, Table, Tag } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { useDeleteProductMutation, useGetProductsQuery, useUpdateProductMutation,  } from "../../redux/features/Product/productApi";
+import { useDeleteProductMutation, useGetProductsQuery, useUpdateProductMutation } from "../../redux/features/Product/productApi";
+import { Link } from "react-router-dom";
 
 const { confirm } = Modal;
 
@@ -11,13 +12,11 @@ const ProductManagement = () => {
   const [updateProduct] = useUpdateProductMutation();
   
   const products = data?.data || [];
-  const activeProducts = products.filter(p=>!p.isDeleted)
-  console.log(activeProducts);
-  // State to control modal visibility and form data
+  const activeProducts = products.filter(p => !p.isDeleted); // Filter out deleted products
+  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Show the delete confirmation modal
   const showDeleteConfirm = (productId: string) => {
     confirm({
       title: "Are you sure you want to delete this product?",
@@ -32,7 +31,6 @@ const ProductManagement = () => {
     });
   };
 
- 
   const handleDeleteProduct = async (productId: string) => {
     try {
       const res = await deleteProduct(productId).unwrap();
@@ -44,38 +42,32 @@ const ProductManagement = () => {
     }
   };
 
-  
   const handleEditProduct = (product: any) => {
     setSelectedProduct(product);
-    setIsModalVisible(true);  
+    setIsModalVisible(true);
   };
 
- 
   const handleUpdateProduct = async (values: any) => {
     try {
-      console.log(values,selectedProduct._id);
-      const res = await updateProduct({ id: selectedProduct._id, data:values }).unwrap();
-      console.log(res);
+      const res = await updateProduct({ id: selectedProduct._id, data: values }).unwrap();
       if (res.success) {
         message.success("Product updated successfully!");
-        setIsModalVisible(false);  
+        setIsModalVisible(false);
       }
     } catch (error) {
       console.error("Failed to update product:", error);
     }
   };
 
-  // Modal form submission handler
   const onFinish = (values: any) => {
     const updateProduct = {
       name: values.name,
       price: Number(values.price),
-      stock:Number(values.stock),
+      stock: Number(values.stock),
       category: values.category,
       description: values.description,
+    };
 
-    }
-   
     handleUpdateProduct(updateProduct);
   };
 
@@ -124,12 +116,13 @@ const ProductManagement = () => {
   return (
     <div>
       <div className="mb-4">
-        <Button type="primary" onClick={() => console.log("Create a new product")}>
-          Create New Product
-        </Button>
+        <Link to="/createProduct">
+          <Button type="primary">Create New Product</Button>
+        </Link>
       </div>
 
-      <Table columns={columns} dataSource={products} rowKey="_id" />
+      {/* Use activeProducts as dataSource */}
+      <Table columns={columns} dataSource={activeProducts} rowKey="_id" />
 
       {/* Modal for editing a product */}
       <Modal
@@ -150,21 +143,43 @@ const ProductManagement = () => {
               description: selectedProduct.description,
             }}
           >
-            <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please input the product name!' }]}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please input the product name!" }]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item label="Price" name="price" rules={[{ required: true, message: 'Please input the product price!' }]}>
+            <Form.Item
+              label="Price"
+              name="price"
+              rules={[{ required: true, message: "Please input the product price!" }]}
+            >
               <Input type="number" />
             </Form.Item>
 
-            <Form.Item label="Category" name="category" rules={[{ required: true, message: 'Please input the product category!' }]}>
+            <Form.Item
+              label="Category"
+              name="category"
+              rules={[{ required: true, message: "Please input the product category!" }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="stock" name="stock" rules={[{ required: true, message: 'Please input the product stock!' }]}>
+
+            <Form.Item
+              label="Stock"
+              name="stock"
+              rules={[{ required: true, message: "Please input the product stock!" }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="description" name="description" rules={[{ required: true, message: 'Please input the product description!' }]}>
+
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[{ required: true, message: "Please input the product description!" }]}
+            >
               <Input />
             </Form.Item>
 

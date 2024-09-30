@@ -11,6 +11,7 @@ import SignUp from "../page/Auth/SignUp";
 import CheckOutPage from "../component/CheckOutPage/CheckOutPage";
 import SuccessPage from "../component/CheckOutPage/SuccessPage";
 import ProductManagement from "../component/ProductManagement/ProductManagement";
+import CreateProduct from "../component/ProductManagement/createProduct";
 
 
 
@@ -71,6 +72,11 @@ const router = createBrowserRouter([
         
                 path:'/productManagement',
                 element: <ProductManagement/>,
+            },
+            {
+        
+                path:'/createProduct',
+                element: <CreateProduct/>,
             }
            
         ]
