@@ -1,35 +1,52 @@
 import { Button, Checkbox, InputNumber, Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // for navigation
+import { useNavigate } from "react-router-dom";
 import { useDeleteCartMutation, useGetTotalPriceQuery, useGetUserCartQuery, useUpdateCartMutation } from "../../redux/features/Cart/CartApi";
+
+
+interface Product {
+    images: string[];
+    name: string;
+    price: number;
+    stock: number;
+}
+
+interface CartItem {
+    _id: string;
+    product: Product;
+    quantity: number;
+    isDeleted?: boolean;
+    paid?: string;
+}
 
 const { confirm } = Modal;
 
 const UserCartPage = () => {
-    const { data: cartItems } = useGetUserCartQuery(undefined); 
+    // Ensure cartItems is typed as CartItem[]
+    const { data: cartItems = [] as CartItem[] } = useGetUserCartQuery(undefined); 
     const { data: price } = useGetTotalPriceQuery(undefined); 
     const [deleteCart] = useDeleteCartMutation(); 
     const [updateCartQuantity] = useUpdateCartMutation(); 
     const totPrice = price?.toFixed(2);
-    const [localQuantity, setLocalQuantity] = useState({});
+    const [localQuantity, setLocalQuantity] = useState<Record<string, number>>({});
     const navigate = useNavigate();
 
-    // Filter out active cart items
-    const activeCart = cartItems ? cartItems.filter(item => !item.isDeleted) : [];
+   
+    const activeCart: CartItem[] = cartItems.filter((item: CartItem) => !item.isDeleted);
     
-    // Check if the cart is paid
-    const cartPaid = cartItems ? cartItems.some(item => item.paid === "paid") : false;
+    
+    const cartPaid = activeCart.some(item => item.paid === "paid");
 
-    // Redirect if the cart is paid
-    // useEffect(() => {
-    //     if (cartPaid) {
-    //         message.info("Your cart has already been paid.");
-    //         navigate("/carts"); // Redirect to order summary or any other page
-    //     }
-    // }, [cartPaid, navigate]);
+    
+    useEffect(() => {
+        if (cartPaid) {
+            message.info("Your cart has already been paid.");
+            navigate("/carts"); 
+        }
+    }, [cartPaid, navigate]);
 
-    const handleDeleteCart = (id) => {
+    const handleDeleteCart = (id: string) => {
         confirm({
             title: 'Are you sure you want to remove this product?',
             icon: <ExclamationCircleOutlined />,
@@ -48,7 +65,7 @@ const UserCartPage = () => {
         });
     };
 
-    const handleQuantityChange = async (id, value) => {
+    const handleQuantityChange = async (id: string, value: number) => {
         setLocalQuantity((prev) => ({
             ...prev,
             [id]: value,
@@ -87,17 +104,17 @@ const UserCartPage = () => {
                             <img src={item.product.images[0]} alt={item.product.name} className="col-span-1" />
                             <p className="col-span-3 ml-5">{item.product.name}</p>
 
-                            {/* Quantity Controls */}
+                            
                             <InputNumber
                                 className="col-span-3"
                                 min={1}
                                 max={item.product.stock}
                                 value={localQuantity[item._id] ?? item.quantity}
-                                onChange={(value) => handleQuantityChange(item._id, value)}
+                                onChange={(value) => handleQuantityChange(item._id, value as number)}
                             />
                             <span className="col-span-2">৳{item.product.price}</span>
 
-                            {/* Remove Product Button */}
+                          
                             <Button
                                 className="col-span-1"
                                 type="primary"
@@ -113,7 +130,7 @@ const UserCartPage = () => {
                 )}
             </div>
 
-            {/* Pricing Details */}
+           
             <div className="col-span-1 bg-white shadow-md p-4">
                 <h3 className="text-lg font-bold">Order Summary</h3>
                 <div className="mt-2 p-2">

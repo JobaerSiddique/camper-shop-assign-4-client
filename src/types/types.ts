@@ -22,3 +22,8 @@ export interface Product {
     maxPrice?: number;
     sort?: string;
   }
+
+ export interface CartItem {
+    product: Product;
+    quantity: number; 
+  }

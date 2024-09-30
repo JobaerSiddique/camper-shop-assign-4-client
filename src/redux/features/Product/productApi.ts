@@ -1,9 +1,5 @@
-
-
 import { Product, ProductQueryParams, UpdateProduct } from "../../../types/types";
 import { baseApi } from "../../api/baseApi";
-
-
 
 interface ProductResponse {
     data: Product[];
@@ -13,9 +9,13 @@ interface SingleProductResponse {
     data: Product;
 }
 
+interface ApiResponse {
+    success: boolean;
+    message: string;
+}
+
 export const productApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        
         getProducts: builder.query<ProductResponse, ProductQueryParams>({
             query: ({ search = '', category = '', minPrice = 0, maxPrice = 1000, sort = '' } = {}) => {
                 const params = new URLSearchParams();
@@ -31,11 +31,10 @@ export const productApi = baseApi.injectEndpoints({
                 };
             },
             keepUnusedDataFor: 300,
-            refetchOnMountOrArgChange: true, 
+            
             providesTags: ["Product"],
         }),
 
-      
         getProductById: builder.query<SingleProductResponse, string>({
             query: (id) => ({
                 url: `/products/${id}`,
@@ -43,8 +42,7 @@ export const productApi = baseApi.injectEndpoints({
             providesTags: ["Product"],
         }),
 
-        
-        updateProduct: builder.mutation<void, UpdateProduct>({
+        updateProduct: builder.mutation<ApiResponse, UpdateProduct>({
             query: ({ id, data }) => ({
                 url: `/products/${id}`,
                 method: "PUT",
@@ -53,8 +51,7 @@ export const productApi = baseApi.injectEndpoints({
             invalidatesTags: ["Product"],
         }),
 
-      
-        deleteProduct: builder.mutation<void, string>({
+        deleteProduct: builder.mutation<ApiResponse, string>({
             query: (id) => ({
                 url: `/products/${id}`,
                 method: "DELETE",
@@ -62,8 +59,7 @@ export const productApi = baseApi.injectEndpoints({
             invalidatesTags: ["Product"],
         }),
 
-       
-        createProduct: builder.mutation<void, Product>({
+        createProduct: builder.mutation<ApiResponse, Product>({
             query: (data) => ({
                 url: "/products/create-product",
                 method: "POST",

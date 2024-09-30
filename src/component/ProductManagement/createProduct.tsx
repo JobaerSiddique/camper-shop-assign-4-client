@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, Button, Input, Form, message, InputNumber, Upload } from "antd";
 import { useForm, Controller } from "react-hook-form";
 import { UploadOutlined } from "@ant-design/icons";
-import { RcFile } from "antd/es/upload/interface";
+import { RcFile } from "antd/es/upload/interface"; // Only import RcFile
 import { useCreateProductMutation } from "../../redux/features/Product/productApi";
 
 const { TextArea } = Input;
@@ -53,8 +53,7 @@ const CreateProduct: React.FC = () => {
     }
   };
 
-  // Handle file change and upload
-  const onFileChange = async ({ file }: { file: RcFile }) => {
+  const onFileChange = async (file: RcFile) => {
     const uploadedImageUrl = await handleImageUpload(file);
     if (uploadedImageUrl) {
       setImageUrls((prev) => [...prev, uploadedImageUrl]);
@@ -64,10 +63,11 @@ const CreateProduct: React.FC = () => {
     }
   };
 
-  // Submit form handler
   const onSubmit = async (data: ProductFormData) => {
     try {
       const productData = {
+        _id: "", // or generate an ID if necessary, or leave it empty if the backend handles this
+        isDeleted: false, // default to false for a newly created product
         ...data,
         price: Number(data.price),
         stock: Number(data.stock),
@@ -168,7 +168,7 @@ const CreateProduct: React.FC = () => {
           {/* Image Upload */}
           <Form.Item label="Upload Images">
             <Upload
-              customRequest={onFileChange}
+              customRequest={({ file }) => onFileChange(file as RcFile)} // Updated to use the correct function signature
               listType="picture"
               accept="image/*"
               multiple
@@ -188,7 +188,6 @@ const CreateProduct: React.FC = () => {
             </div>
           </Form.Item>
 
-          
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
               Create Product

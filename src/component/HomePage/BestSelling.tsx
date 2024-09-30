@@ -3,6 +3,7 @@ import { useGetProductsQuery } from '../../redux/features/Product/productApi';
 import { Link } from 'react-router-dom'; // For navigation
 import Loading from '../../page/Shared/Loading';
 
+
 interface Product {
   _id: string;
   name: string;
@@ -12,25 +13,24 @@ interface Product {
   stock: number;
   category: string;
   ratings: number;
+  isDeleted?: boolean; // Optional property
 }
 
 const BestSelling: React.FC = () => {
   
-  const { data, isLoading, isError } = useGetProductsQuery(undefined);
+  const { data, isLoading, isError } = useGetProductsQuery({});
 
- 
   if (isLoading) {
     return <Loading />;
   }
 
-  
   if (isError) {
     return <div>Error loading products</div>;
   }
 
   // Destructure the product data and select the first 3 products
   const products: Product[] = data?.data ?? [];
-  const activeProduct = products.filter(p => !p.isDeleted)
+  const activeProduct = products.filter(p => !p.isDeleted); // Filtering out deleted products
   const recommendedProducts = activeProduct.slice(0, 3); 
 
   return (

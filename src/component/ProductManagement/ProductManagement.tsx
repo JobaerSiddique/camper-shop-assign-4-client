@@ -18,7 +18,7 @@ interface Product {
 }
 
 const ProductManagement: React.FC = () => {
-  const { data } = useGetProductsQuery(undefined);
+  const { data } = useGetProductsQuery({});
   const [deleteProduct] = useDeleteProductMutation();
   const [updateProduct] = useUpdateProductMutation();
   

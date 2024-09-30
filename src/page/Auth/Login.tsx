@@ -17,32 +17,28 @@ const Login = () => {
   const dispatch = useAppDispatch()
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
     const navigate= useNavigate()
-console.log(login)
-    const onSubmit = async(data) => {
-        const email = data.email;
-        const password= data.password;
-        const userInfo = {
-            email,
-            password
-        }
-       const res = await login(userInfo).unwrap()
-       if(res.success){
+
+const onSubmit = async (data: FormData) => {
+    const email = data.email;
+    const password = data.password;
+    const userInfo = {
+        email,
+        password
+    }
+    const res = await login(userInfo).unwrap()
+    if (res.success) {
         Swal.fire({
             position: "top-end",
             icon: "success",
             title: `${res.message}`,
             showConfirmButton: false,
             timer: 1500
-          });
-          navigate('/')
+        });
+        navigate('/')
         const user = verifyToken(res.data.accesstoken)
-        dispatch(setUser({user:user,token:res.data.accesstoken}))
-       }
-     
-      
-      
-
-    };
+        dispatch(setUser({ user: user, token: res.data.accesstoken }))
+    }
+};
 
     
     return (

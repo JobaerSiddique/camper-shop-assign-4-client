@@ -2,20 +2,25 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, message } from "antd";
 import { useCreateOrderMutation } from "../../redux/features/order/OrderApi";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertIcon, SweetAlertPosition } from "sweetalert2";
 import Loading from "../../page/Shared/Loading";
+
+interface FormData {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+}
 
 const CheckoutPage = () => {
     const location = useLocation();
     const { cartItemIds } = location.state;
-    const totalPrice = Number(location.state?.totalPrice || 0)
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [orders,{isLoading}] = useCreateOrderMutation()
-    const navigate = useNavigate()
+    const totalPrice = Number(location.state?.totalPrice || 0);
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+    const [orders, { isLoading }] = useCreateOrderMutation();
+    const navigate = useNavigate();
 
-
-  
-    const onSubmit =async (data) => {
+    const onSubmit = async (data: FormData) => {
         const order = {
             cartItemIds,
             totalPrice,
@@ -23,35 +28,34 @@ const CheckoutPage = () => {
                 name: data.name,
                 email: data.email,
                 phone: data.phone,
-                address: data.address
+                address: data.address,
             }
-            
         };
+        
         const res = await orders(order).unwrap();
-        if(res.success){
+        if (res.success) {
             Swal.fire({
-                position: "top-center",
-                icon: "success",
+                position: "top-center" as SweetAlertPosition,
+                icon: "success" as SweetAlertIcon, 
                 title: `${res.message}`,
                 showConfirmButton: false,
-                timer: 1500
-              });
-              navigate('/success')
-        }
-        else{
+                timer: 1500,
+            });
+            navigate('/success');
+        } else {
             message.error(res.message);
         }
-        
     };
-    if(isLoading){
-        return <Loading/>
+
+    if (isLoading) {
+        return <Loading />;
     }
+
     return (
         <>
             <Card bordered={true} style={{ width: 500 }} className="shadow-2xl mx-auto my-10">
                 <h1 className="text-center text-2xl font-bold mb-6">CheckOut Page</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
-
                     {/* Name Field */}
                     <div className="form-group mb-5">
                         <label className="block text-gray-700 mb-2">Name:</label>
@@ -62,7 +66,7 @@ const CheckoutPage = () => {
                             {...register("name", {
                                 required: {
                                     value: true,
-                                    message: "Name is required"
+                                    message: "Name is required",
                                 }
                             })}
                         />
@@ -81,11 +85,11 @@ const CheckoutPage = () => {
                             {...register("email", {
                                 required: {
                                     value: true,
-                                    message: "Email is required"
+                                    message: "Email is required",
                                 },
                                 pattern: {
                                     value: /^\S+@\S+$/i,
-                                    message: "Invalid email format"
+                                    message: "Invalid email format",
                                 }
                             })}
                         />
@@ -104,11 +108,11 @@ const CheckoutPage = () => {
                             {...register("phone", {
                                 required: {
                                     value: true,
-                                    message: "Phone number is required"
+                                    message: "Phone number is required",
                                 },
                                 pattern: {
                                     value: /^(?:\+88|01)?\d{9}$/,
-                                    message: "Invalid phone number format"
+                                    message: "Invalid phone number format",
                                 }
                             })}
                         />
@@ -127,7 +131,7 @@ const CheckoutPage = () => {
                             {...register("address", {
                                 required: {
                                     value: true,
-                                    message: "Delivery address is required"
+                                    message: "Delivery address is required",
                                 }
                             })}
                         />

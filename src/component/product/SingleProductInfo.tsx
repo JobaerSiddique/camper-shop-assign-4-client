@@ -11,21 +11,23 @@ import { Button, message } from "antd";
 
 const SingleProductInfo = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: product, isLoading, error } = useGetProductByIdQuery(id);
+  
+  // Ensure id is defined before querying
+  const { data: product, isLoading, error } = useGetProductByIdQuery(id || ""); // Pass an empty string if id is undefined
   const user = useAppSelector(currentUser);
-  const { data: cartItems } = useGetUserCartQuery(undefined)
+  const { data: cartItems } = useGetUserCartQuery(undefined);
   const [addToCart, { isLoading: cartLoading }] = useAddToCartMutation();
   const [hasAddedToCart, setHasAddedToCart] = useState(false);
   const [quantitys, setQuantity] = useState(1);
 
   // Find if the product is already in the user's cart
   const cartItem = cartItems?.find((item: any) => item.product._id === product?.data?._id);
-console.log(cartItem);
+
   useEffect(() => {
     // If the product is already in the cart, set the hasAddedToCart flag to true
     if (cartItem) {
       setHasAddedToCart(true);
-      setQuantity(cartItem.stock); // set the quantity to the existing cart quantity
+      setQuantity(cartItem.quantity); // set the quantity to the existing cart quantity
     }
   }, [cartItem]);
 
@@ -40,10 +42,8 @@ console.log(cartItem);
       return;
     }
 
-   
     const currentStockInCart = cartItem ? cartItem.quantity : 0; 
-  const newQuantity = currentStockInCart + quantitys; 
-
+    const newQuantity = currentStockInCart + quantitys; 
 
     if (newQuantity > product.data.stock) {
       message.error("Cannot add more than available stock");
@@ -66,8 +66,7 @@ console.log(cartItem);
   };
 
   // Disable "Add to Cart" button if already added and stock limit is reached
-  const disableAddToCart =
-  hasAddedToCart && cartItem  && cartItem.quantity >= product.data.stock;
+  const disableAddToCart = hasAddedToCart && cartItem && cartItem.quantity >= product.data.stock;
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);

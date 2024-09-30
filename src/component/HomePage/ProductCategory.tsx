@@ -27,7 +27,7 @@ const getCategoryWithImage = (products: Product[]) => {
 };
 
 const CategoriesSection: React.FC = () => {
-  const { data, isLoading, isError } = useGetProductsQuery(undefined);
+  const { data, isLoading, isError } = useGetProductsQuery({});
 
   
   const products: Product[] = data?.data ?? [];
