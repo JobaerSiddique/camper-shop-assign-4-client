@@ -12,12 +12,12 @@ const videos: Video[] = [
   {
     title: "Camping Essentials for Beginners",
     description: "Learn about the must-have items for your first camping trip.",
-    videoUrl: "https://youtu.be/zI_sjJY5aro?si=ajTkusDjZquZaXgI", 
+    videoUrl: "https://www.youtube.com/embed/Scxs7L0vhZ4", 
   },
   {
     title: "Top 10 Camping Spots in the US",
     description: "Explore some of the best camping locations across the United States.",
-    videoUrl: "https://youtu.be/0XKZX0G0FC4?si=udaFwembM5wcKbJ-", 
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", 
   },
   {
     title: "How to Set Up a Tent Like a Pro",
